@@ -1,0 +1,34 @@
+{
+	"name": "lsBlobJson",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "lsDomainStorage",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"blobPath": {
+				"type": "string"
+			},
+			"fileName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat(dataset().fileName, '.json')",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@concat(\n    dataset().blobPath,\n    '/Year=', formatDateTime(utcNow(), 'yyyy'),\n    '/Month=', formatDateTime(utcNow(), 'MM'),\n    '/Day=', formatDateTime(utcNow(), 'dd'),\n    '/Time=', formatDateTime(utcNow(), 'HH'),\n    '-', formatDateTime(utcNow(), 'mm')\n)",
+					"type": "Expression"
+				},
+				"fileSystem": "landing"
+			}
+		},
+		"schema": {}
+	}
+}

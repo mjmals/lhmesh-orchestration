@@ -1,0 +1,119 @@
+{
+	"name": "plRestToBlobJson",
+	"properties": {
+		"activities": [
+			{
+				"name": "Extract data",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "@pipeline().parameters.baseUrl",
+						"type": "Expression"
+					},
+					"method": "GET"
+				}
+			},
+			{
+				"name": "Load Json",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Extract data",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"additionalColumns": [
+							{
+								"name": "Data",
+								"value": {
+									"value": "@activity('Extract data').output.Response",
+									"type": "Expression"
+								}
+							}
+						],
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"wildcardFolderPath": "*",
+							"wildcardFileName": "*.test",
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings",
+							"copyBehavior": "MergeFiles"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "lsBlobDefault",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "lsBlobJson",
+						"type": "DatasetReference",
+						"parameters": {
+							"blobPath": {
+								"value": "@pipeline().parameters.blobPath",
+								"type": "Expression"
+							},
+							"fileName": {
+								"value": "@pipeline().parameters.blobFileName",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"baseUrl": {
+				"type": "string"
+			},
+			"blobPath": {
+				"type": "string"
+			},
+			"blobFileName": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "Landing"
+		},
+		"annotations": []
+	}
+}
