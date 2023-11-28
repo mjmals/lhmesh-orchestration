@@ -6,7 +6,11 @@ param(
     [string] $RepositoryAccount,
 
     [Parameter(Mandatory = $true)]
-    [string] $RepositoryName
+    [string] $RepositoryName,
+
+    [Parameter(Mandatory = $true)]
+
+    [string] $BranchName
 )
 
 $factories = az datafactory list | ConvertFrom-Json
@@ -27,6 +31,6 @@ foreach($factory in $factories)
         az datafactory configure-factory-repo `
             --factory-resource-id "$dfId" `
             --location "$location" `
-            --factory-git-hub-configuration account-name="$RepositoryAccount" repository-name="$RepositoryName" root-folder="/pipelines" collaboration-branch="adf"
+            --factory-git-hub-configuration account-name="$RepositoryAccount" repository-name="$RepositoryName" root-folder="/pipelines" collaboration-branch="$BranchName"
     }
 }

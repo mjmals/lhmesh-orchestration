@@ -1,5 +1,5 @@
 {
-	"name": "lsBlobJson",
+	"name": "dsBlobJson",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "lsDomainStorage",

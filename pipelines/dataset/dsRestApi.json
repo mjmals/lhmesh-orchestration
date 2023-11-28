@@ -1,0 +1,23 @@
+{
+	"name": "dsRestApi",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "lsRestApi",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"baseUrl": {
+					"value": "@dataset().baseUrl",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"baseUrl": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"schema": []
+	}
+}

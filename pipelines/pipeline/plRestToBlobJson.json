@@ -3,8 +3,8 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Extract data",
-				"type": "WebActivity",
+				"name": "Load Json",
+				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
@@ -15,53 +15,13 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"url": {
-						"value": "@pipeline().parameters.baseUrl",
-						"type": "Expression"
-					},
-					"method": "GET"
-				}
-			},
-			{
-				"name": "Load Json",
-				"type": "Copy",
-				"dependsOn": [
-					{
-						"activity": "Extract data",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
 					"source": {
-						"type": "JsonSource",
-						"additionalColumns": [
-							{
-								"name": "Data",
-								"value": {
-									"value": "@activity('Extract data').output.Response",
-									"type": "Expression"
-								}
-							}
-						],
-						"storeSettings": {
-							"type": "AzureBlobFSReadSettings",
-							"recursive": true,
-							"wildcardFolderPath": "*",
-							"wildcardFileName": "*.test",
-							"enablePartitionDiscovery": false
-						},
-						"formatSettings": {
-							"type": "JsonReadSettings"
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "GET",
+						"paginationRules": {
+							"supportRFC5988": "true"
 						}
 					},
 					"sink": {
@@ -78,13 +38,19 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "lsBlobDefault",
-						"type": "DatasetReference"
+						"referenceName": "dsRestApi",
+						"type": "DatasetReference",
+						"parameters": {
+							"baseUrl": {
+								"value": "@pipeline().parameters.baseUrl",
+								"type": "Expression"
+							}
+						}
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "lsBlobJson",
+						"referenceName": "dsBlobJson",
 						"type": "DatasetReference",
 						"parameters": {
 							"blobPath": {
